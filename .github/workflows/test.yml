@@ -19,13 +19,12 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
       - run: npm ci
+      - run: tar -czf build.tar ./*
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: |
-            node_modules
-            index.js
+          path: build.tar
 
   publish:
     runs-on: ubuntu-latest
@@ -42,6 +41,7 @@ jobs:
         with:
           name: build
 
+      - run: tar -xzf build.tar && rm build.tar
       - run: ls -lha
 
       - name: Log in to the Container registry
