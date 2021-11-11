@@ -12,55 +12,69 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    container: node:16-alpine
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - run: npm ci
-      - run: tar -czf build.tar ./*
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: build
-          path: build.tar
 
-  publish:
+  test:
     runs-on: ubuntu-latest
-    needs: build
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
     permissions:
+      id-token: write
       contents: read
-      packages: write
-
     steps:
-      - run: ls -lha
-
-      - name: Download math result for job 1
-        uses: actions/download-artifact@v2
+      - name: Configure AWS credentials from Test account
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          name: build
+          role-to-assume: arn:aws:iam::223190806625:role/test-1
+          aws-region: ap-southeast-1
 
-      - run: tar -xzf build.tar && rm build.tar
-      - run: ls -lha
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+#  build:
+#    runs-on: ubuntu-latest
+#    container: node:16-alpine
+#    steps:
+#      - name: Check out repository code
+#        uses: actions/checkout@v2
+#      - run: npm ci
+#      - run: tar -czf build.tar ./*
+#      - name: Archive production artifacts
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: build
+#          path: build.tar
+#
+#  publish:
+#    runs-on: ubuntu-latest
+#    needs: build
+#    permissions:
+#      contents: read
+#      packages: write
+#
+#    steps:
+#      - run: ls -lha
+#
+#      - name: Download math result for job 1
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: build
+#
+#      - run: tar -xzf build.tar && rm build.tar
+#      - run: ls -lha
+#
+#      - name: Log in to the Container registry
+#        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+#        with:
+#          registry: ${{ env.REGISTRY }}
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#
+#      - name: Extract metadata (tags, labels) for Docker
+#        id: meta
+#        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+#        with:
+#          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+#
+#      - name: Build and push Docker image
+#        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+#        with:
+#          context: .
+#          push: true
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
