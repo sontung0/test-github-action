@@ -4,6 +4,11 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch'
+        required: true
+        default: 'main'
 
 jobs:
 
@@ -20,16 +25,18 @@ jobs:
 #        id: login-ecr
 #        uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - run: ls -lha
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: 223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test
-          tags: |
-            # branch event
-            type=ref,event=branch,prefix=dev-,priority=100
-            # tag event
-            type=ref,event=tag,pattern={{version}},priority=100
 
 #  build:
 #    runs-on: ubuntu-latest
