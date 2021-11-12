@@ -11,22 +11,67 @@ on:
         default: ''
 env:
   REPOSITORY: 223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test
-
 jobs:
-
-#  test:
+#  build:
 #    runs-on: ubuntu-latest
+#    container: node:16-alpine
 #    steps:
-##      - name: Configure AWS credentials
-##        uses: aws-actions/configure-aws-credentials@v1
-##        with:
-##          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-##          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-##          aws-region: ap-southeast-1
-##      - name: Login to Amazon ECR
-##        id: login-ecr
-##        uses: aws-actions/amazon-ecr-login@v1
-#
+#      - name: Check out repository code
+#        uses: actions/checkout@v2
+#        with:
+#          ref: ${{ github.event.inputs.branch }}
+#      - run: npm ci
+#      - run: tar -czf /tmp/build.tar .
+#      - name: Archive production artifacts
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: app
+#          path: /tmp/app.tar
+#  publish:
+#    runs-on: ubuntu-latest
+#    needs: build
+#    steps:
+#      - name: Download artifact
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: app
+#      - run: tar -xzf app.tar && rm app.tar
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ap-southeast-1
+#      - name: Login to Amazon ECR
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v1
+#      - name: Build and push Docker image
+#        if: ${{ startsWith(github.event.inputs.branch, 'v') }}
+#        uses: docker/build-push-action@v2
+#        with:
+#          push: true
+#          tags: |
+#            ${{ env.REPOSITORY }}:${{ github.event.inputs.branch }}
+#            ${{ env.REPOSITORY }}:latest
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          tag=`echo ${{ github.event.inputs.branch }} | sed "s/^v/""/"`
+          echo "::set-output name=tag::$tag"
+        id: make-tags
+
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ap-southeast-1
+#      - name: Login to Amazon ECR
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v1
+
 #      - name: Check out repository code
 #        uses: actions/checkout@v2
 #        with:
@@ -50,51 +95,5 @@ jobs:
 #          tags: |
 #            223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test:${{ github.event.inputs.branch }}
 #            223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test:latest
-#
-#
 
-  build:
-    runs-on: ubuntu-latest
-    container: node:16-alpine
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.inputs.branch }}
-      - run: npm ci
-      - run: tar -czf /tmp/build.tar .
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: build
-          path: /tmp/build.tar
 
-  publish:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-
-      - run: tar -xzf build.tar && rm build.tar
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-southeast-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: |
-            ${{ env.REPOSITORY }}:${{ github.event.inputs.branch }}
-            ${{ env.REPOSITORY }}:latest
