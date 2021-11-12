@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          tag=`echo ${{ github.event.inputs.branch }} | sed "s/^v/""/"`
+          tag=`echo "${{ github.event.inputs.branch }}" | sed "s/^v/""/"`
           echo "::set-output name=tag::$tag"
         id: make-tags
 
