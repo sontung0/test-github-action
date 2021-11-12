@@ -9,27 +9,31 @@ on:
         description: 'Branch'
         required: true
 jobs:
-#  ci:
-#    if: ${{ github.event_name == 'workflow_dispatch' }}
-#    uses: sontung0/test-github-action/.github/workflows/react.yml@main
-#    with:
-#      repository: 223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test
-#      branch: ${{ github.event.inputs.branch }}
-#    secrets:
-#      aws-ecr-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#      aws-ecr-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#
-#  tag:
-#    if: ${{ github.event_name == 'push' }}
-#    uses: sontung0/test-github-action/.github/workflows/react.yml@main
-#    with:
-#      repository: 223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test
-#      branch: ${{ github.event.inputs.branch }}
-#    secrets:
-#      aws-ecr-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#      aws-ecr-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-  test:
+  prepare:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "${{ github.ref_name }}"
+      - name: Get branch
+        id: branch
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]
+          then
+            echo "::set-output name=branch::${{ github.ref_name }}"
+          else
+            echo "::set-output name=branch::${{ github.event.inputs.branch }}"
+          fi
+    outputs:
+      branch: ${{ steps.branch.outputs.branch }}
+  ci:
+    needs: prepare
+    uses: sontung0/test-github-action/.github/workflows/react.yml@main
+    with:
+      repository: 223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test
+      branch: ${{ needs.prepare.outputs.branch }}
+    secrets:
+      aws-ecr-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-ecr-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+#  test:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - run: echo "${{ github.ref_name }}"
