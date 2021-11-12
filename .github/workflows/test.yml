@@ -59,8 +59,9 @@ jobs:
     steps:
       - run: |
           tag=`echo "${{ github.event.inputs.branch }}" | sed "s/^v/""/"`
-          echo "::set-output name=tag::$tag"
+          echo "::set-output name=tags::$tag"
         id: make-tags
+      - run: echo "${{ steps.make-tags.outputs.tags }}"
 
 #      - name: Configure AWS credentials
 #        uses: aws-actions/configure-aws-credentials@v1
