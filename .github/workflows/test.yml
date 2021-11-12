@@ -22,7 +22,7 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
       - run: |
           npm ci
-          tar -czf /tmp/build.tar .
+          tar -czf /tmp/app.tar .
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
