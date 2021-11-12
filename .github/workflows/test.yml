@@ -10,7 +10,7 @@ on:
         required: true
         default: ''
 env:
-  REPOSITORY: 223190806625.dkr.ecr.ap-southeast-1.amazonaws.com
+  REPOSITORY: 223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test
 
 jobs:
 
@@ -96,5 +96,5 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ env.REPOSITORY }}/test:${{ github.event.inputs.branch }}
-            ${{ env.REPOSITORY }}/test:latest
+            ${{ env.REPOSITORY }}:${{ github.event.inputs.branch }}
+            ${{ env.REPOSITORY }}:latest
