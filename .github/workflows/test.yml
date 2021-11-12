@@ -59,7 +59,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ steps.make-tags.outputs.tags }}
+#          tags: ${{ steps.make-tags.outputs.tags }}
+          tags: ["${{ env.REPOSITORY }}:aaa","${{ env.REPOSITORY }}:bbb"]
 
 #  test:
 #    runs-on: ubuntu-latest
