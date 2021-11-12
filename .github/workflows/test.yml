@@ -46,8 +46,8 @@ jobs:
         with:
           push: true
           tags: |
-            test:${{ github.event.inputs.branch }}
-            test:latest
+            223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test:${{ github.event.inputs.branch }}
+            223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test:latest
 
 #  build:
 #    runs-on: ubuntu-latest
