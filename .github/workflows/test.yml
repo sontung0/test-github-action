@@ -10,7 +10,7 @@ on:
         required: true
 jobs:
   ci:
-    uses: sontung0/test-github-action/.github/workflows/ci.yaml@main
+    uses: sontung0/test-github-action/.github/workflows/ci.yml@main
     with:
       repository: 223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test
       branch: ${{ github.event.inputs.branch }}
