@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          if [startsWith(github.event.inputs.branch, 'v') == true]
+          if [${{ startsWith(github.event.inputs.branch, 'v') }} == true]
           then
             tag=`echo "${{ github.event.inputs.branch }}" | sed "s/^v/""/"`
             echo "::set-output name=tags::$tag,latest"
