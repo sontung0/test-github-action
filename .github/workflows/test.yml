@@ -57,11 +57,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          tag=`echo "${{ github.event.inputs.branch }}" | sed "s/^v/""/"`
-          echo "::set-output name=tags::$tag"
-        id: make-tags
-      - run: echo "${{ steps.make-tags.outputs.tags }}"
+#      - run: |
+#          tag=`echo "${{ github.event.inputs.branch }}" | sed "s/^v/""/"`
+#          echo "::set-output name=tags::$tag,latest"
+#        id: make-tags
+#      - run: echo "${{ steps.make-tags.outputs.tags }}"
+      - run: echo "${{ startsWith(github.event.inputs.branch, 'v') }}"
 
 #      - name: Configure AWS credentials
 #        uses: aws-actions/configure-aws-credentials@v1
