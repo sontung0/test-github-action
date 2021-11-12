@@ -32,8 +32,3 @@ jobs:
     secrets:
       aws-ecr-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       aws-ecr-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-#  test:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - run: echo "${{ github.ref_name }}"
