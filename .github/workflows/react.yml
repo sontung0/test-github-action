@@ -1,4 +1,4 @@
-name: CI
+name: React CI
 on:
   workflow_call:
     inputs:
@@ -26,10 +26,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ inputs.branch }}
-      - run: |
+      - name: Build application
+        run: |
           npm ci
           tar -czf /tmp/app.tar .
-      - name: Archive production artifacts
+      - name: Archive application artifact
         uses: actions/upload-artifact@v2
         with:
           name: app
@@ -38,12 +39,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Download artifact
+      - name: Download application artifact
         uses: actions/download-artifact@v2
         with:
           name: app
-      - run: tar -xzf app.tar && rm app.tar
-      - run: |
+      - name: Extract application artifact
+        run: tar -xzf app.tar && rm app.tar
+      - name: Make image tags
+        id: make-tags
+        run: |
           if [ ${{ startsWith(inputs.branch, 'v') }} == true ]
           then
             tag=`echo "${{ inputs.branch }}" | sed "s/^v/""/"`
@@ -51,7 +55,6 @@ jobs:
           else
             echo "::set-output name=tags::${{ inputs.repository }}:dev-${{ inputs.branch }}"
           fi
-        id: make-tags
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
