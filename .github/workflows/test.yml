@@ -23,12 +23,12 @@ jobs:
           fi
     outputs:
       branch: ${{ steps.branch.outputs.branch }}
-  ci:
-    needs: prepare
-    uses: sontung0/test-github-action/.github/workflows/react.yml@main
-    with:
-      repository: 223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test
-      branch: ${{ needs.prepare.outputs.branch }}
-    secrets:
-      aws-ecr-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws-ecr-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#   ci:
+#     needs: prepare
+#     uses: sontung0/test-github-action/.github/workflows/react.yml@main
+#     with:
+#       repository: 223190806625.dkr.ecr.ap-southeast-1.amazonaws.com/test
+#       branch: ${{ needs.prepare.outputs.branch }}
+#     secrets:
+#       aws-ecr-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#       aws-ecr-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
