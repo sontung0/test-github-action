@@ -22,6 +22,7 @@ jobs:
             echo "::set-output name=branch::${{ github.event.inputs.branch }}"
           fi
           echo "::notice file=app.js,line=1,col=5,endColumn=7::Missing semicolon"
+          echo "::debug::Set the Octocat variable"
 
     outputs:
       branch: ${{ steps.branch.outputs.branch }}
