@@ -16,6 +16,6 @@ jobs:
     steps:
       - env:
           TEST: ${{ secrets.TEST }}
-      - run: |
+        run: |
           echo "${{ secrets.TEST }}"
           echo $TEST
